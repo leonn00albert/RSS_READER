@@ -9,92 +9,30 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.5.0/semantic.min.css" integrity="sha512-KXol4x3sVoO+8ZsWPFI/r5KBVB/ssCGB5tsv2nVOKwLg33wTFP3fmnXa47FdSVIshVTgsYk/1734xSk9aFIa4A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.5.0/semantic.min.js" integrity="sha512-Xo0Jh8MsOn72LGV8kU5LsclG7SUzJsWGhXbWcYs2MAmChkQzwiW/yTQwdJ8w6UA9C6EVG18GHb/TrYpYCjyAQw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-    <style>
-        @font-face {
-            font-family: deftone;
-            src: url(deftone_stylus.otf);
-        }
-        @font-face {
-            font-family: gnuolana;
-            src: url(gnuolane_rg.otf);
-        }
-
-        .mt-5 {
-            margin-top: 5em;
-        }
-
-        body {
-            background-color: #d3e1d7;
-        }
-
-        .header-text {
-            font-family: deftone;
-            text-align: center;
-            font-size: 7em;
-            text-shadow: 3px 3px black;
-            color: #FCFBF4;
-        }
-        .add-button {
-            background-color: #fd8282 !important;
-            color: white !important;
-        }
-        a {
-            color: #66b9c9;
-        }
-
-        div .text {
-            font-family: gnuolana !important;
-            color: rgba(98, 98, 98, 0.87);
-            font-size: 1.3em;
-
-        }
-
-        .ui .segment {
-            background: #fbf0eab0 !important;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
     <div class="ui container mt-5">
         <h1 class="header-text">Simple RSS</h1>
         <div class="ui raised segment">
+            <form action="/add_rss.php" method="POST">
             <div class="ui fluid action input">
-                <input type="text" placeholder="Add RSS Feed...">
-                <div class="ui button add-button">Add</div>
+                <input name="rss" type="text" placeholder="Add RSS Feed...">
+                <button type="submit" class="ui button add-button">Add</button>
             </div>
-            <a href="/?rss=" value="search"></a>
+            </form>
             <div class="ui middle aligned selection list">
                 <?php
-                require "get_favicon.php";
 
-                $arr = [
-                    array(
-                        'icon' => get_favicon((string) "https://www.notechmagazine.com"),
-                        "rss" => "http://feeds2.feedburner.com/NoTechMagazine",
-                        "title" => get_title("https://www.notechmagazine.com")
-
-                    ),
-                    array(
-                        'icon' => get_favicon((string) "https://reason.com"),
-                        "rss" => "https://reason.com/latest/feed/",
-                        "title" => get_title("https://reason.com")
-
-                    ),
-                    array(
-                        'icon' => get_favicon((string) "https://www.wired.com"),
-                        "rss" => "https://www.wired.com/feed/category/culture/latest/rss",
-                        "title" => get_title("https://www.wired.com")
-
-                    ),
-                ];
-
-
-                foreach ($arr as $item) {
-                    $link = $item['rss'];
-                    $src = $item['icon'];
-                    $title = $item['title'];
+                $database = new SQLite3('feeds.db');
+                $query = "SELECT * FROM feeds";
+                $result = $database->query($query);
+                while($row = $result->fetchArray())
+                    {
+                    $link = $row['rss'];
+                    $src = $row['icon'];
+                    $title = $row['title'];
                     echo <<<HERE
 
                 <div class="item">
@@ -104,15 +42,10 @@
       
                     </div>
                 </div>
-
-   
-           
- 
-         
          
             HERE;
                 }
-
+                $database->close();
                 ?>
             </div>
 
@@ -120,14 +53,16 @@
     
             <div class="ui feed">
                 <?php
-
+                require "get_favicon.php";
                 require "get_image.php";
                 require "days_ago.php";
                 if (isset($_GET["rss"])) {
                     $rss = simplexml_load_file($_GET["rss"]);
                     $title = $rss->channel->title;
-                    $link = $rss->channel->link;
-                    $icon = get_favicon((string) $link);
+                    $link = $rss->channel->item[0]->link;
+                    $host = parse_url( $link, PHP_URL_HOST);
+                    
+                    $icon = get_favicon((string)  $host );
 
 
                     foreach ($rss->channel->item as $item) {

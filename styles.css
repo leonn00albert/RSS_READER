@@ -1,0 +1,46 @@
+@font-face {
+    font-family: deftone;
+    src: url(deftone_stylus.otf);
+}
+@font-face {
+    font-family: gnuolana;
+    src: url(gnuolane_rg.otf);
+}
+
+.mt-5 {
+    margin-top: 5em;
+}
+
+body {
+    background-color: #d3e1d7;
+}
+
+.header-text {
+    font-family: deftone;
+    text-align: center;
+    font-size: 7em;
+    text-shadow: 5px 5px #936767;
+    color: #FCFBF4;
+}
+.add-button {
+    background-color: #fd8282 !important;
+    color: white !important;
+}
+a {
+    color: #66b9c9;
+}
+
+div .text {
+    font-family: gnuolana !important;
+    color: rgba(98, 98, 98, 0.87);
+    font-size: 1.3em;
+
+}
+
+.ui .segment {
+    background: #fbf0eab0 !important;
+}
+
+.label img {
+    width: 30px;
+}
