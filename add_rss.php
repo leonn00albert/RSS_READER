@@ -29,7 +29,7 @@ if (isset($_POST["rss"])) {
     $result = $statement->execute();
     
     if ($result) {
-        echo "Data inserted successfully!";
+        header("location: /");
     } else {
         echo "Error inserting data: " . $database->lastErrorMsg();
     }

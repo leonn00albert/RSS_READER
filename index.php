@@ -61,7 +61,7 @@
                     $title = $rss->channel->title;
                     $link = $rss->channel->item[0]->link;
                     $host = parse_url( $link, PHP_URL_HOST);
-                    
+
                     $icon = get_favicon((string)  $host );
 
 
@@ -74,7 +74,10 @@
                         $days_ago = days_ago($item->pubDate);
                         if (isset($image[0])) {
                             preg_match('/<img.*?src="(.*?)"/i',  $image[0], $matches);
-                            $src = $matches[1];
+                            if(isset($matches[1])) {
+                                $src = $matches[1];
+                            }
+                         
                             $src_img = "<img src=$src width='50'></a>";
                         }
 

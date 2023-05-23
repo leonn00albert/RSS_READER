@@ -2,6 +2,7 @@
 function get_favicon($url) {
 // Load the HTML from the website
 $html = file_get_contents("https://" . $url);
+
 // Create a DOM object and parse the HTML
 $dom = new DOMDocument();
 @$dom->loadHTML($html);
@@ -17,7 +18,10 @@ foreach ($links as $link) {
 }
 
 // If the favicon is a relative URL, prepend the website's base URL
-
+if ($favicon[0] === "/") {
+    $favicon = "https://" . $url . '/' . ltrim($favicon, '/');
+    return $favicon;
+}
 
 return $favicon;
 
